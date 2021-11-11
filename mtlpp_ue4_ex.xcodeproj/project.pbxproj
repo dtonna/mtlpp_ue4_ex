@@ -18,6 +18,9 @@
 		0F0E0E47273D3557004EA43C /* mtlpp_ue4_exTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E46273D3557004EA43C /* mtlpp_ue4_exTests.m */; };
 		0F0E0E51273D3558004EA43C /* mtlpp_ue4_exUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E50273D3558004EA43C /* mtlpp_ue4_exUITests.m */; };
 		0F0E0E53273D3558004EA43C /* mtlpp_ue4_exUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E52273D3558004EA43C /* mtlpp_ue4_exUITestsLaunchTests.m */; };
+		0F0E0E61273D43E3004EA43C /* renderer in Resources */ = {isa = PBXBuildFile; fileRef = 0F0E0E60273D43E3004EA43C /* renderer */; };
+		0F0E0E64273D4D83004EA43C /* MMView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E63273D4D83004EA43C /* MMView.m */; };
+		0F0E0E67273D4E85004EA43C /* MetalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E66273D4E85004EA43C /* MetalView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +59,11 @@
 		0F0E0E4C273D3558004EA43C /* mtlpp_ue4_exUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = mtlpp_ue4_exUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F0E0E50273D3558004EA43C /* mtlpp_ue4_exUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mtlpp_ue4_exUITests.m; sourceTree = "<group>"; };
 		0F0E0E52273D3558004EA43C /* mtlpp_ue4_exUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mtlpp_ue4_exUITestsLaunchTests.m; sourceTree = "<group>"; };
+		0F0E0E60273D43E3004EA43C /* renderer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = renderer; sourceTree = "<group>"; };
+		0F0E0E62273D4D83004EA43C /* MMView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMView.h; sourceTree = "<group>"; };
+		0F0E0E63273D4D83004EA43C /* MMView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMView.m; sourceTree = "<group>"; };
+		0F0E0E65273D4E85004EA43C /* MetalView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetalView.h; sourceTree = "<group>"; };
+		0F0E0E66273D4E85004EA43C /* MetalView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetalView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +114,7 @@
 		0F0E0E27273D3555004EA43C /* mtlpp_ue4_ex */ = {
 			isa = PBXGroup;
 			children = (
+				0F0E0E60273D43E3004EA43C /* renderer */,
 				0F0E0E28273D3555004EA43C /* AppDelegate.h */,
 				0F0E0E29273D3555004EA43C /* AppDelegate.m */,
 				0F0E0E2B273D3555004EA43C /* Renderer.h */,
@@ -118,6 +127,10 @@
 				0F0E0E37273D3557004EA43C /* Assets.xcassets */,
 				0F0E0E39273D3557004EA43C /* LaunchScreen.storyboard */,
 				0F0E0E3C273D3557004EA43C /* main.m */,
+				0F0E0E62273D4D83004EA43C /* MMView.h */,
+				0F0E0E63273D4D83004EA43C /* MMView.m */,
+				0F0E0E65273D4E85004EA43C /* MetalView.h */,
+				0F0E0E66273D4E85004EA43C /* MetalView.m */,
 			);
 			path = mtlpp_ue4_ex;
 			sourceTree = "<group>";
@@ -245,6 +258,7 @@
 				0F0E0E3B273D3557004EA43C /* LaunchScreen.storyboard in Resources */,
 				0F0E0E38273D3557004EA43C /* Assets.xcassets in Resources */,
 				0F0E0E36273D3555004EA43C /* Main.storyboard in Resources */,
+				0F0E0E61273D43E3004EA43C /* renderer in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,9 +285,11 @@
 			files = (
 				0F0E0E3D273D3557004EA43C /* main.m in Sources */,
 				0F0E0E32273D3555004EA43C /* Shaders.metal in Sources */,
+				0F0E0E64273D4D83004EA43C /* MMView.m in Sources */,
 				0F0E0E2D273D3555004EA43C /* Renderer.m in Sources */,
 				0F0E0E30273D3555004EA43C /* GameViewController.m in Sources */,
 				0F0E0E2A273D3555004EA43C /* AppDelegate.m in Sources */,
+				0F0E0E67273D4E85004EA43C /* MetalView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,6 +462,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6XD7TGD3HC;
@@ -474,6 +491,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_OBJC_ARC = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6XD7TGD3HC;

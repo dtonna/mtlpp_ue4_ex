@@ -5,13 +5,14 @@
 //  Created by Noppadol Anuroje on 11/11/2564 BE.
 //
 
+#import <QuartzCore/CAMetalLayer.h>
 #import "GameViewController.h"
 #import "Renderer.h"
+#import "MetalView.h"
 
 @implementation GameViewController
 {
-    MTKView *_view;
-
+    MetalView *_view;
     Renderer *_renderer;
 }
 
@@ -19,23 +20,43 @@
 {
     [super viewDidLoad];
 
-    _view = (MTKView *)self.view;
+    CGRect contentSize = self.view.bounds;
 
-    _view.device = MTLCreateSystemDefaultDevice();
-    _view.backgroundColor = UIColor.blackColor;
+    _view = [[MetalView alloc] initWithFrame:contentSize];
+    _view.bounds = contentSize;
+    _view.delegate = self;
+    [self.view addSubview:_view];
+    
+    _renderer = [[Renderer alloc] initWithLayer:_view.metalLayer];
+    
+    [_renderer drawableResize:_view.bounds.size];
+}
 
-    if(!_view.device)
-    {
-        NSLog(@"Metal is not supported on this device");
-        self.view = [[UIView alloc] initWithFrame:self.view.frame];
-        return;
-    }
+-(void)dealloc
+{
+    [_renderer dealloc];
+    [_view dealloc];
+    [super dealloc];
+}
 
-    _renderer = [[Renderer alloc] initWithMetalKitView:_view];
+-(BOOL)prefersStatusBarHidden
+{
+    return YES;
+}
 
-    [_renderer mtkView:_view drawableSizeWillChange:_view.bounds.size];
+-(BOOL)prefersHomeIndicatorAutoHidden
+{
+    return YES;
+}
 
-    _view.delegate = _renderer;
+- (void)drawableResize:(CGSize)size
+{
+    [_renderer drawableResize:size];
+}
+
+- (void)renderToMetalLayer:(nonnull CAMetalLayer *)layer
+{
+    [_renderer renderToMetalLayer:layer];
 }
 
 @end

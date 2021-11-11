@@ -5,13 +5,16 @@
 //  Created by Noppadol Anuroje on 11/11/2564 BE.
 //
 
-#import <MetalKit/MetalKit.h>
+#import <Metal/Metal.h>
+#import <QuartzCore/CAMetalLayer.h>
 
 // Our platform independent renderer class.   Implements the MTKViewDelegate protocol which
 //   allows it to accept per-frame update and drawable resize callbacks.
-@interface Renderer : NSObject <MTKViewDelegate>
+@interface Renderer : NSObject
 
--(nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)view;
+- (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer;
+
+- (void)drawableResize:(CGSize)drawableSize;
 
 @end
 
