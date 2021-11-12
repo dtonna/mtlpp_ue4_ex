@@ -89,9 +89,9 @@ static const NSUInteger MaxBuffersInFlight = 3;
     vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStepFunction(mtlpp::VertexStepFunction::PerVertex);
     
     mtlpp::Library defaultLibrary = device_.NewDefaultLibrary();
-    mtlpp::Function vertexFunction = defaultLibrary.NewFunction("vertexShader");
-    mtlpp::Function fragmentFunction = defaultLibrary.NewFunction("fragmentShader");
-    mtlpp::Function fragmentFunction2 = defaultLibrary.NewFunction("fragmentShader2");
+    ns::AutoReleased<mtlpp::Function> vertexFunction(defaultLibrary.NewFunction("vertexShader"));
+    ns::AutoReleased<mtlpp::Function> fragmentFunction(defaultLibrary.NewFunction("fragmentShader"));
+    ns::AutoReleased<mtlpp::Function> fragmentFunction2(defaultLibrary.NewFunction("fragmentShader2"));
 
     mtlpp::RenderPipelineDescriptor pipelineStateDescriptor;
     pipelineStateDescriptor.SetLabel("MyPipeline");
