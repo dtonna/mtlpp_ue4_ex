@@ -12,6 +12,8 @@
 //   allows it to accept per-frame update and drawable resize callbacks.
 @interface Renderer : NSObject
 
+- (nonnull instancetype)initWithLayer:(nonnull CAMetalLayer *)layer;
+
 - (void)renderToMetalLayer:(nonnull CAMetalLayer*)metalLayer;
 
 - (void)drawableResize:(CGSize)drawableSize;

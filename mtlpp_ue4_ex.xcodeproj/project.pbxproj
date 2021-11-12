@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0F0E0E2A273D3555004EA43C /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E29273D3555004EA43C /* AppDelegate.m */; };
-		0F0E0E2D273D3555004EA43C /* Renderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E2C273D3555004EA43C /* Renderer.m */; };
-		0F0E0E30273D3555004EA43C /* GameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E2F273D3555004EA43C /* GameViewController.m */; };
+		0F0E0E2A273D3555004EA43C /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E29273D3555004EA43C /* AppDelegate.mm */; };
+		0F0E0E2D273D3555004EA43C /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E2C273D3555004EA43C /* Renderer.mm */; };
+		0F0E0E30273D3555004EA43C /* GameViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E2F273D3555004EA43C /* GameViewController.mm */; };
 		0F0E0E32273D3555004EA43C /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E31273D3555004EA43C /* Shaders.metal */; };
 		0F0E0E36273D3555004EA43C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0F0E0E34273D3555004EA43C /* Main.storyboard */; };
 		0F0E0E38273D3557004EA43C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0F0E0E37273D3557004EA43C /* Assets.xcassets */; };
@@ -19,8 +19,8 @@
 		0F0E0E51273D3558004EA43C /* mtlpp_ue4_exUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E50273D3558004EA43C /* mtlpp_ue4_exUITests.m */; };
 		0F0E0E53273D3558004EA43C /* mtlpp_ue4_exUITestsLaunchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E52273D3558004EA43C /* mtlpp_ue4_exUITestsLaunchTests.m */; };
 		0F0E0E61273D43E3004EA43C /* renderer in Resources */ = {isa = PBXBuildFile; fileRef = 0F0E0E60273D43E3004EA43C /* renderer */; };
-		0F0E0E64273D4D83004EA43C /* MMView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E63273D4D83004EA43C /* MMView.m */; };
-		0F0E0E67273D4E85004EA43C /* MetalView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E66273D4E85004EA43C /* MetalView.m */; };
+		0F0E0E64273D4D83004EA43C /* MMView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E63273D4D83004EA43C /* MMView.mm */; };
+		0F0E0E67273D4E85004EA43C /* MetalView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F0E0E66273D4E85004EA43C /* MetalView.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,11 +43,11 @@
 /* Begin PBXFileReference section */
 		0F0E0E25273D3555004EA43C /* mtlpp_ue4_ex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mtlpp_ue4_ex.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0F0E0E28273D3555004EA43C /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		0F0E0E29273D3555004EA43C /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		0F0E0E29273D3555004EA43C /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		0F0E0E2B273D3555004EA43C /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
-		0F0E0E2C273D3555004EA43C /* Renderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Renderer.m; sourceTree = "<group>"; };
+		0F0E0E2C273D3555004EA43C /* Renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
 		0F0E0E2E273D3555004EA43C /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
-		0F0E0E2F273D3555004EA43C /* GameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
+		0F0E0E2F273D3555004EA43C /* GameViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GameViewController.mm; sourceTree = "<group>"; };
 		0F0E0E31273D3555004EA43C /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		0F0E0E33273D3555004EA43C /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		0F0E0E35273D3555004EA43C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -61,9 +61,9 @@
 		0F0E0E52273D3558004EA43C /* mtlpp_ue4_exUITestsLaunchTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mtlpp_ue4_exUITestsLaunchTests.m; sourceTree = "<group>"; };
 		0F0E0E60273D43E3004EA43C /* renderer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = renderer; sourceTree = "<group>"; };
 		0F0E0E62273D4D83004EA43C /* MMView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MMView.h; sourceTree = "<group>"; };
-		0F0E0E63273D4D83004EA43C /* MMView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MMView.m; sourceTree = "<group>"; };
+		0F0E0E63273D4D83004EA43C /* MMView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MMView.mm; sourceTree = "<group>"; };
 		0F0E0E65273D4E85004EA43C /* MetalView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetalView.h; sourceTree = "<group>"; };
-		0F0E0E66273D4E85004EA43C /* MetalView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MetalView.m; sourceTree = "<group>"; };
+		0F0E0E66273D4E85004EA43C /* MetalView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MetalView.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,11 +116,11 @@
 			children = (
 				0F0E0E60273D43E3004EA43C /* renderer */,
 				0F0E0E28273D3555004EA43C /* AppDelegate.h */,
-				0F0E0E29273D3555004EA43C /* AppDelegate.m */,
+				0F0E0E29273D3555004EA43C /* AppDelegate.mm */,
 				0F0E0E2B273D3555004EA43C /* Renderer.h */,
-				0F0E0E2C273D3555004EA43C /* Renderer.m */,
+				0F0E0E2C273D3555004EA43C /* Renderer.mm */,
 				0F0E0E2E273D3555004EA43C /* GameViewController.h */,
-				0F0E0E2F273D3555004EA43C /* GameViewController.m */,
+				0F0E0E2F273D3555004EA43C /* GameViewController.mm */,
 				0F0E0E31273D3555004EA43C /* Shaders.metal */,
 				0F0E0E33273D3555004EA43C /* ShaderTypes.h */,
 				0F0E0E34273D3555004EA43C /* Main.storyboard */,
@@ -128,9 +128,9 @@
 				0F0E0E39273D3557004EA43C /* LaunchScreen.storyboard */,
 				0F0E0E3C273D3557004EA43C /* main.m */,
 				0F0E0E62273D4D83004EA43C /* MMView.h */,
-				0F0E0E63273D4D83004EA43C /* MMView.m */,
+				0F0E0E63273D4D83004EA43C /* MMView.mm */,
 				0F0E0E65273D4E85004EA43C /* MetalView.h */,
-				0F0E0E66273D4E85004EA43C /* MetalView.m */,
+				0F0E0E66273D4E85004EA43C /* MetalView.mm */,
 			);
 			path = mtlpp_ue4_ex;
 			sourceTree = "<group>";
@@ -285,11 +285,11 @@
 			files = (
 				0F0E0E3D273D3557004EA43C /* main.m in Sources */,
 				0F0E0E32273D3555004EA43C /* Shaders.metal in Sources */,
-				0F0E0E64273D4D83004EA43C /* MMView.m in Sources */,
-				0F0E0E2D273D3555004EA43C /* Renderer.m in Sources */,
-				0F0E0E30273D3555004EA43C /* GameViewController.m in Sources */,
-				0F0E0E2A273D3555004EA43C /* AppDelegate.m in Sources */,
-				0F0E0E67273D4E85004EA43C /* MetalView.m in Sources */,
+				0F0E0E64273D4D83004EA43C /* MMView.mm in Sources */,
+				0F0E0E2D273D3555004EA43C /* Renderer.mm in Sources */,
+				0F0E0E30273D3555004EA43C /* GameViewController.mm in Sources */,
+				0F0E0E2A273D3555004EA43C /* AppDelegate.mm in Sources */,
+				0F0E0E67273D4E85004EA43C /* MetalView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
