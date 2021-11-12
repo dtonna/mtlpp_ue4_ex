@@ -70,8 +70,9 @@
         self.metalLayer.device = MTLCreateSystemDefaultDevice();
         self.metalLayer.presentsWithTransaction = NO;
         self.metalLayer.drawsAsynchronously = YES;
-        CGFloat components[] = { 0.0, 0.0, 0.0, 1 };
-        self.metalLayer.backgroundColor = CGColorCreate(CGColorSpaceCreateDeviceRGB(), components);
+//        CGFloat components[] = { 0.0, 0.0, 0.0, 1 };
+//        CGColorSpaceRef
+//        self.metalLayer.backgroundColor = CGColorCreate(CGColorSpaceCreateDeviceRGB(), components);
         self.metalLayer.pixelFormat = MTLPixelFormatBGRA8Unorm; // MTLPixelFormatBGRA8Unorm_sRGB;
         //self.metalLayer.framebufferOnly = true; // Note: setting this will dissallow sampling and reading from texture.
         self.metalLayer.framebufferOnly = NO;

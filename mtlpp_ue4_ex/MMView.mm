@@ -53,6 +53,7 @@
 - (void)dealloc
 {
     [self stopRenderLoop];
+    [_delegate release];
     [super dealloc];
 }
 

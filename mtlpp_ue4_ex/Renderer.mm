@@ -12,6 +12,10 @@
 
 // Include header shared between C code here, which executes Metal API commands, and .metal files
 #import "ShaderTypes.h"
+
+#include <iostream>
+#include <cstdlib>
+#include <vector>
 #include "renderer/mtlpp/mtlpp.hpp"
 
 static const NSUInteger MaxBuffersInFlight = 3;
@@ -50,6 +54,7 @@ static const NSUInteger MaxBuffersInFlight = 3;
     float _rotation;
 
     MTKMesh *_mesh;
+    std::vector<NSObject*> resources;
 }
 
 -(nonnull instancetype)initWithLayer:(CAMetalLayer *)layer
@@ -68,119 +73,142 @@ static const NSUInteger MaxBuffersInFlight = 3;
 }
 - (void)_loadMetal
 {
-    ns::Array<mtlpp::VertexBufferLayoutDescriptor> vertexLayouts = _mtlVertexDescriptor.GetLayouts();
-    ns::Array<mtlpp::VertexAttributeDescriptor> attribs = _mtlVertexDescriptor.GetAttributes();
-    
-    unsigned int attribIdx = VertexAttributePosition;
-    attribs[attribIdx].SetFormat(mtlpp::VertexFormat::Float3);
-    attribs[attribIdx].SetOffset(0);
-    attribs[attribIdx].SetBufferIndex(BufferIndexMeshPositions);
 
-    attribs[(unsigned int)VertexAttributeTexcoord].SetFormat(mtlpp::VertexFormat::Float2);
-    attribs[(unsigned int)VertexAttributeTexcoord].SetOffset(0);
-    attribs[(unsigned int)VertexAttributeTexcoord].SetBufferIndex(BufferIndexMeshGenerics);
+    @autoreleasepool {
+        ns::Array<mtlpp::VertexBufferLayoutDescriptor> vertexLayouts = _mtlVertexDescriptor.GetLayouts();
+        ns::Array<mtlpp::VertexAttributeDescriptor> attribs = _mtlVertexDescriptor.GetAttributes();
+        
+        unsigned int attribIdx = VertexAttributePosition;
+        attribs[attribIdx].SetFormat(mtlpp::VertexFormat::Float3);
+        attribs[attribIdx].SetOffset(0);
+        attribs[attribIdx].SetBufferIndex(BufferIndexMeshPositions);
 
-    vertexLayouts[(unsigned int)BufferIndexMeshPositions].SetStride(12);
-    vertexLayouts[(unsigned int)BufferIndexMeshPositions].SetStepRate(1);
-    vertexLayouts[(unsigned int)BufferIndexMeshPositions].SetStepFunction(mtlpp::VertexStepFunction::PerVertex);
+        attribs[(unsigned int)VertexAttributeTexcoord].SetFormat(mtlpp::VertexFormat::Float2);
+        attribs[(unsigned int)VertexAttributeTexcoord].SetOffset(0);
+        attribs[(unsigned int)VertexAttributeTexcoord].SetBufferIndex(BufferIndexMeshGenerics);
 
-    vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStride(8);
-    vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStepRate(1);
-    vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStepFunction(mtlpp::VertexStepFunction::PerVertex);
-    
-    mtlpp::Library defaultLibrary = device_.NewDefaultLibrary();
-    ns::AutoReleased<mtlpp::Function> vertexFunction(defaultLibrary.NewFunction("vertexShader"));
-    ns::AutoReleased<mtlpp::Function> fragmentFunction(defaultLibrary.NewFunction("fragmentShader"));
-    ns::AutoReleased<mtlpp::Function> fragmentFunction2(defaultLibrary.NewFunction("fragmentShader2"));
+        vertexLayouts[(unsigned int)BufferIndexMeshPositions].SetStride(12);
+        vertexLayouts[(unsigned int)BufferIndexMeshPositions].SetStepRate(1);
+        vertexLayouts[(unsigned int)BufferIndexMeshPositions].SetStepFunction(mtlpp::VertexStepFunction::PerVertex);
 
-    mtlpp::RenderPipelineDescriptor pipelineStateDescriptor;
-    pipelineStateDescriptor.SetLabel("MyPipeline");
-    pipelineStateDescriptor.SetSampleCount(1);
-    pipelineStateDescriptor.SetVertexFunction(vertexFunction);
-    pipelineStateDescriptor.SetFragmentFunction(fragmentFunction);
-    pipelineStateDescriptor.SetVertexDescriptor(_mtlVertexDescriptor);
-    pipelineStateDescriptor.GetColorAttachments()[0].SetPixelFormat(mtlpp::PixelFormat::BGRA8Unorm);
-    pipelineStateDescriptor.SetDepthAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
-    pipelineStateDescriptor.SetStencilAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
+        vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStride(8);
+        vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStepRate(1);
+        vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStepFunction(mtlpp::VertexStepFunction::PerVertex);
+        
+        mtlpp::Library defaultLibrary = device_.NewDefaultLibrary();
+        mtlpp::Function vertexFunction(defaultLibrary.NewFunction(@"vertexShader"));
+        mtlpp::Function fragmentFunction(defaultLibrary.NewFunction(@"fragmentShader"));
+        mtlpp::Function fragmentFunction2(defaultLibrary.NewFunction(@"fragmentShader2"));
+        resources.push_back(defaultLibrary);
+        resources.push_back(vertexFunction);
+        resources.push_back(fragmentFunction);
+        resources.push_back(fragmentFunction2);
+        
+        mtlpp::RenderPipelineDescriptor pipelineStateDescriptor;
+        pipelineStateDescriptor.SetLabel("MyPipeline");
+        pipelineStateDescriptor.SetSampleCount(1);
+        pipelineStateDescriptor.SetVertexFunction(vertexFunction);
+        pipelineStateDescriptor.SetFragmentFunction(fragmentFunction);
+        pipelineStateDescriptor.SetVertexDescriptor(_mtlVertexDescriptor);
+        pipelineStateDescriptor.GetColorAttachments()[0].SetPixelFormat(mtlpp::PixelFormat::BGRA8Unorm);
+        pipelineStateDescriptor.SetDepthAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
+        pipelineStateDescriptor.SetStencilAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
 
-    ns::AutoReleasedError *error = NULL;
-    _pipelineState = device_.NewRenderPipelineState(pipelineStateDescriptor, error);
-    if (!_pipelineState)
-    {
-        NSLog(@"Failed to created pipeline state, error %s", error->GetLocalizedDescription().GetCStr());
+        ns::AutoReleasedError *error = NULL;
+        _pipelineState = device_.NewRenderPipelineState(pipelineStateDescriptor, error);
+        if (!_pipelineState || error != NULL)
+        {
+            NSLog(@"Failed to created pipeline state, error %s", error->GetLocalizedDescription().GetCStr());
+        }
+
+        mtlpp::DepthStencilDescriptor depthStateDesc;
+        depthStateDesc.SetDepthCompareFunction(mtlpp::CompareFunction::Less);
+        depthStateDesc.SetDepthWriteEnabled(true);
+        
+        mtlpp::StencilDescriptor frontStencilDesc;
+        frontStencilDesc.SetStencilCompareFunction(mtlpp::CompareFunction::Always);
+        frontStencilDesc.SetStencilFailureOperation(mtlpp::StencilOperation::Keep);
+        frontStencilDesc.SetDepthFailureOperation(mtlpp::StencilOperation::Keep);
+        frontStencilDesc.SetDepthStencilPassOperation(mtlpp::StencilOperation::Replace);
+        frontStencilDesc.SetReadMask(0xFF);
+        frontStencilDesc.SetWriteMask(1);
+        
+        depthStateDesc.SetFrontFaceStencil(frontStencilDesc);
+        depthStateDesc.SetBackFaceStencil(nil);
+        
+        _depthState = device_.NewDepthStencilState(depthStateDesc);
+        
+        /* Frame */
+        mtlpp::RenderPipelineDescriptor pipelineStateDescriptor2;
+        pipelineStateDescriptor2.SetLabel(@"MyPipeline2");
+        pipelineStateDescriptor2.SetSampleCount(1);
+        pipelineStateDescriptor2.SetVertexFunction(vertexFunction);
+        pipelineStateDescriptor2.SetFragmentFunction(fragmentFunction2);
+        pipelineStateDescriptor2.SetVertexDescriptor(_mtlVertexDescriptor);
+        pipelineStateDescriptor2.GetColorAttachments()[0].SetPixelFormat(mtlpp::PixelFormat::BGRA8Unorm);
+        pipelineStateDescriptor2.SetDepthAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
+        pipelineStateDescriptor2.SetStencilAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
+
+        _pipelineState2 = device_.NewRenderPipelineState(pipelineStateDescriptor2, error);
+        if (!_pipelineState2 || error != NULL)
+        {
+            NSLog(@"Failed to created pipeline state, error %s", error->GetLocalizedDescription().GetCStr());
+        }
+
+        mtlpp::DepthStencilDescriptor depthStateDesc2;
+        depthStateDesc2.SetDepthWriteEnabled(NO);
+        
+        mtlpp::StencilDescriptor frontStencilDesc2;
+        frontStencilDesc2.SetStencilCompareFunction(mtlpp::CompareFunction::NotEqual);
+        frontStencilDesc2.SetStencilFailureOperation(mtlpp::StencilOperation::Keep);
+        frontStencilDesc2.SetDepthFailureOperation(mtlpp::StencilOperation::Keep);
+        frontStencilDesc2.SetDepthStencilPassOperation(mtlpp::StencilOperation::Replace);
+        frontStencilDesc2.SetReadMask(0xFF);
+        frontStencilDesc2.SetWriteMask(1);
+        
+        depthStateDesc2.SetFrontFaceStencil(frontStencilDesc2);
+        depthStateDesc2.SetBackFaceStencil(nil);
+        
+        _depthState2 = device_.NewDepthStencilState(depthStateDesc2);
+
+        for(NSUInteger i = 0; i < MaxBuffersInFlight; i++)
+        {
+            _dynamicUniformBuffer[i] = device_.NewBuffer(sizeof(Uniforms), mtlpp::ResourceOptions::StorageModeShared);
+            _dynamicUniformBuffer[i].SetLabel(@"UniformBuffer");
+            _dynamicUniformBuffer2[i] = device_.NewBuffer(sizeof(Uniforms), mtlpp::ResourceOptions::StorageModeShared);
+            _dynamicUniformBuffer2[i].SetLabel(@"UniformBuffer2");
+        }
+
+        commandQueue_ = device_.NewCommandQueue();
+
+        _drawableRenderDescriptor.GetColorAttachments()[0].SetLoadAction(mtlpp::LoadAction::Clear);
+        _drawableRenderDescriptor.GetColorAttachments()[0].SetStoreAction(mtlpp::StoreAction::Store);
+        _drawableRenderDescriptor.GetColorAttachments()[0].SetClearColor(mtlpp::ClearColor(0, 0, 0, 1.0));
+       
     }
-
-    mtlpp::DepthStencilDescriptor depthStateDesc;
-    depthStateDesc.SetDepthCompareFunction(mtlpp::CompareFunction::Less);
-    depthStateDesc.SetDepthWriteEnabled(true);
-    
-    mtlpp::StencilDescriptor frontStencilDesc;
-    frontStencilDesc.SetStencilCompareFunction(mtlpp::CompareFunction::Always);
-    frontStencilDesc.SetStencilFailureOperation(mtlpp::StencilOperation::Keep);
-    frontStencilDesc.SetDepthFailureOperation(mtlpp::StencilOperation::Keep);
-    frontStencilDesc.SetDepthStencilPassOperation(mtlpp::StencilOperation::Replace);
-    frontStencilDesc.SetReadMask(0xFF);
-    frontStencilDesc.SetWriteMask(1);
-    
-    depthStateDesc.SetFrontFaceStencil(frontStencilDesc);
-    depthStateDesc.SetBackFaceStencil(nil);
-    
-    _depthState = device_.NewDepthStencilState(depthStateDesc);
-    
-    /* Frame */
-    mtlpp::RenderPipelineDescriptor pipelineStateDescriptor2;
-    pipelineStateDescriptor2.SetLabel("MyPipeline2");
-    pipelineStateDescriptor2.SetSampleCount(1);
-    pipelineStateDescriptor2.SetVertexFunction(vertexFunction);
-    pipelineStateDescriptor2.SetFragmentFunction(fragmentFunction2);
-    pipelineStateDescriptor2.SetVertexDescriptor(_mtlVertexDescriptor);
-    pipelineStateDescriptor2.GetColorAttachments()[0].SetPixelFormat(mtlpp::PixelFormat::BGRA8Unorm);
-    pipelineStateDescriptor2.SetDepthAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
-    pipelineStateDescriptor2.SetStencilAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
-
-    _pipelineState2 = device_.NewRenderPipelineState(pipelineStateDescriptor2, error);
-    if (!_pipelineState2)
-    {
-        NSLog(@"Failed to created pipeline state, error %s", error->GetLocalizedDescription().GetCStr());
-    }
-
-    mtlpp::DepthStencilDescriptor depthStateDesc2;
-    depthStateDesc2.SetDepthWriteEnabled(NO);
-    
-    mtlpp::StencilDescriptor frontStencilDesc2;
-    frontStencilDesc2.SetStencilCompareFunction(mtlpp::CompareFunction::NotEqual);
-    frontStencilDesc2.SetStencilFailureOperation(mtlpp::StencilOperation::Keep);
-    frontStencilDesc2.SetDepthFailureOperation(mtlpp::StencilOperation::Keep);
-    frontStencilDesc2.SetDepthStencilPassOperation(mtlpp::StencilOperation::Replace);
-    frontStencilDesc2.SetReadMask(0xFF);
-    frontStencilDesc2.SetWriteMask(1);
-    
-    depthStateDesc2.SetFrontFaceStencil(frontStencilDesc2);
-    depthStateDesc2.SetBackFaceStencil(nil);
-    
-    _depthState2 = device_.NewDepthStencilState(depthStateDesc2);
-
-    for(NSUInteger i = 0; i < MaxBuffersInFlight; i++)
-    {
-        _dynamicUniformBuffer[i] = device_.NewBuffer(sizeof(Uniforms), mtlpp::ResourceOptions::StorageModeShared);
-        _dynamicUniformBuffer[i].SetLabel("UniformBuffer");
-        _dynamicUniformBuffer2[i] = device_.NewBuffer(sizeof(Uniforms), mtlpp::ResourceOptions::StorageModeShared);
-        _dynamicUniformBuffer2[i].SetLabel("UniformBuffer2");
-    }
-
-    commandQueue_ = device_.NewCommandQueue();
-
-    _drawableRenderDescriptor.GetColorAttachments()[0].SetLoadAction(mtlpp::LoadAction::Clear);
-    _drawableRenderDescriptor.GetColorAttachments()[0].SetStoreAction(mtlpp::StoreAction::Store);
-    _drawableRenderDescriptor.GetColorAttachments()[0].SetClearColor(mtlpp::ClearColor(0, 0, 0, 1.0));
 }
 
 -(void)dealloc
 {
+    for (auto resource : resources) {
+        [((NSObject*)resource) release];
+    }
+    for (int i = 0; i < MaxBuffersInFlight; i++) {
+        [_dynamicUniformBuffer[i] release];
+        [_dynamicUniformBuffer2[i] release];
+    }
+
+    [_mtlVertexDescriptor release];
     [_colorMap release];
     [_mesh release];
+    [_depthState release];
+    [_depthState2 release];
+    [_pipelineState release];
+    [_pipelineState2 release];
+    [commandQueue_ release];
+    [_drawableRenderDescriptor release];
+    [device_ release];
     
-
     [super dealloc];
 }
 
@@ -269,17 +297,16 @@ static const NSUInteger MaxBuffersInFlight = 3;
 
     NSError *error = nil; // add initialize to nil
 
-    MTKMeshBufferAllocator *metalAllocator = [[MTKMeshBufferAllocator alloc]
-                                              initWithDevice: device_];
+    MTKMeshBufferAllocator *metalAllocator = [[[MTKMeshBufferAllocator alloc]
+                                              initWithDevice: device_] autorelease];
 
-    MDLMesh *mdlMesh = [MDLMesh newBoxWithDimensions:(vector_float3){4, 4, 4}
+    MDLMesh *mdlMesh = [[MDLMesh newBoxWithDimensions:(vector_float3){4, 4, 4}
                                             segments:(vector_uint3){2, 2, 2}
                                         geometryType:MDLGeometryTypeTriangles
                                        inwardNormals:NO
-                                           allocator:metalAllocator];
+                                           allocator:metalAllocator] autorelease];
 
-    MDLVertexDescriptor *mdlVertexDescriptor =
-    MTKModelIOVertexDescriptorFromMetal(_mtlVertexDescriptor);
+    MDLVertexDescriptor *mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(_mtlVertexDescriptor);
 
     mdlVertexDescriptor.attributes[VertexAttributePosition].name  = MDLVertexAttributePosition;
     mdlVertexDescriptor.attributes[VertexAttributeTexcoord].name  = MDLVertexAttributeTextureCoordinate;
@@ -295,7 +322,7 @@ static const NSUInteger MaxBuffersInFlight = 3;
         NSLog(@"Error creating MetalKit mesh %@", error.localizedDescription);
     }
 
-    MTKTextureLoader* textureLoader = [[MTKTextureLoader alloc] initWithDevice:device_];
+    MTKTextureLoader* textureLoader = [[[MTKTextureLoader alloc] initWithDevice:device_] autorelease];
 
     NSDictionary *textureLoaderOptions =
     @{
@@ -303,11 +330,11 @@ static const NSUInteger MaxBuffersInFlight = 3;
       MTKTextureLoaderOptionTextureStorageMode : @(MTLStorageModePrivate)
       };
 
-    _colorMap = [textureLoader newTextureWithName:@"ColorMap"
+    _colorMap = [[textureLoader newTextureWithName:@"ColorMap"
                                       scaleFactor:1.0
                                            bundle:nil
                                           options:textureLoaderOptions
-                                            error:&error];
+                                            error:&error] autorelease];
 
     if(!_colorMap || error)
     {
@@ -471,9 +498,10 @@ static const NSUInteger MaxBuffersInFlight = 3;
     [self _updateGameState];
     
 
-    id<CAMetalDrawable> currentDrawable = [metalLayer nextDrawable];
+//    id<CAMetalDrawable> currentDrawable = [metalLayer nextDrawable];
+    mtlpp::Drawable currentDrawable = metalLayer.nextDrawable;
     
-    if (currentDrawable) {
+    if (currentDrawable.GetPtr()) {
         CGSize drawableSize = [metalLayer drawableSize];
         if ([_depthTexture.GetPtr() width] != drawableSize.width || [_depthTexture.GetPtr() height] != drawableSize.height)
         {
@@ -482,10 +510,12 @@ static const NSUInteger MaxBuffersInFlight = 3;
         /// Delay getting the currentRenderPassDescriptor until absolutely needed. This avoids
         ///   holding onto the drawable and blocking the display pipeline any longer than necessary
 
-        id<MTLTexture> texture = currentDrawable.texture;
-        if (!texture) {
-            NSLog(@"No Texutre");
-        }
+        mtlpp::Texture texture = ((id<CAMetalDrawable>)currentDrawable.GetPtr()).texture;
+        
+//        id<MTLTexture> texture = currentDrawable.texture;
+//        if (!texture) {
+//            NSLog(@"No Texutre");
+//        }
         _drawableRenderDescriptor.GetColorAttachments()[0].SetTexture(texture);
 
         /// Final pass rendering code here
@@ -565,6 +595,7 @@ static const NSUInteger MaxBuffersInFlight = 3;
     }
 
     commandBuffer.Commit();
+    commandBuffer.WaitUntilCompleted();
 }
 
 #pragma mark Matrix Math Utilities
