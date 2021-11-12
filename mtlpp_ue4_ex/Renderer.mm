@@ -324,6 +324,7 @@ static const NSUInteger MaxBuffersInFlight = 3;
 //    Uniforms * uniforms = (Uniforms*)_dynamicUniformBuffer[_uniformBufferIndex].contents;
 
     uniforms->projectionMatrix = _projectionMatrix;
+    uniforms2->projectionMatrix = _projectionMatrix;
 
     vector_float3 rotationAxis = {1, 1, 0};
     matrix_float4x4 modelMatrix = matrix4x4_rotation(_rotation, rotationAxis);
@@ -535,8 +536,8 @@ static const NSUInteger MaxBuffersInFlight = 3;
         
         renderEncoder.PushDebugGroup("Stencil");
         
-        renderEncoder.SetFrontFacingWinding(mtlpp::Winding::CounterClockwise);
-        renderEncoder.SetCullMode(mtlpp::CullMode::Back);
+//        renderEncoder.SetFrontFacingWinding(mtlpp::Winding::CounterClockwise);
+//        renderEncoder.SetCullMode(mtlpp::CullMode::Back);
         renderEncoder.SetRenderPipelineState(_pipelineState2);
         renderEncoder.SetDepthStencilState(_depthState2);
         
@@ -544,7 +545,7 @@ static const NSUInteger MaxBuffersInFlight = 3;
                                       ,0
                                       ,BufferIndexUniforms);
         
-        
+
         for(MTKSubmesh *submesh in _mesh.submeshes)
         {
             renderEncoder.DrawIndexed(mtlpp::PrimitiveType(submesh.primitiveType)
