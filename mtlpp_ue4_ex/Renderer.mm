@@ -45,6 +45,12 @@ static const NSUInteger MaxBuffersInFlight = 3;
     mtlpp::Texture _colorMap;
     mtlpp::VertexDescriptor _mtlVertexDescriptor;
 
+    mtlpp::Library defaultLibrary_;
+    mtlpp::Function vertexFunction_;
+    mtlpp::Function fragmentFunction_;
+    mtlpp::Function fragmentFunction2_;
+
+    
     float _depth;
 
     uint8_t _uniformBufferIndex;
@@ -54,7 +60,7 @@ static const NSUInteger MaxBuffersInFlight = 3;
     float _rotation;
 
     MTKMesh *_mesh;
-    std::vector<NSObject*> resources;
+//    std::vector<NSObject*> resources;
 }
 
 -(nonnull instancetype)initWithLayer:(CAMetalLayer *)layer
@@ -71,6 +77,8 @@ static const NSUInteger MaxBuffersInFlight = 3;
 
     return self;
 }
+
+
 - (void)_loadMetal
 {
 
@@ -94,21 +102,59 @@ static const NSUInteger MaxBuffersInFlight = 3;
         vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStride(8);
         vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStepRate(1);
         vertexLayouts[(unsigned int)BufferIndexMeshGenerics].SetStepFunction(mtlpp::VertexStepFunction::PerVertex);
+//
+//        mtlpp::Library defaultLibrary(device_.NewDefaultLibrary());//, nullptr, ns::Ownership::AutoRelease);
+//        CFAutorelease(defaultLibrary.GetPtr());
+//        long count = CFGetRetainCount(defaultLibrary_.GetPtr());
+//        NSLog(@"retain count %ld\n", count);
+//        CFAutorelease(defaultLibrary.GetPtr());
         
-        mtlpp::Library defaultLibrary = device_.NewDefaultLibrary();
-        mtlpp::Function vertexFunction(defaultLibrary.NewFunction(@"vertexShader"));
-        mtlpp::Function fragmentFunction(defaultLibrary.NewFunction(@"fragmentShader"));
-        mtlpp::Function fragmentFunction2(defaultLibrary.NewFunction(@"fragmentShader2"));
-        resources.push_back(defaultLibrary);
-        resources.push_back(vertexFunction);
-        resources.push_back(fragmentFunction);
-        resources.push_back(fragmentFunction2);
+//        mtlpp::Function vertexFunction(defaultLibrary.NewFunction(@"vertexShader"));
+//        mtlpp::Function fragmentFunction(defaultLibrary.NewFunction(@"fragmentShader"));
+//        mtlpp::Function fragmentFunction2(defaultLibrary.NewFunction(@"fragmentShader2"));
+//        resources.push_back(defaultLibrary);
+//        resources.push_back(vertexFunction);
+//        resources.push_back(fragmentFunction);
+//        resources.push_back(fragmentFunction2);
+//        mtlpp::Function vertexFunction(defaultLibrary.NewFunction(@"vertexShader"), nullptr, ns::Ownership::AutoRelease);
+//        vertexFunction.GetPtr().autorelease;
+//        [vertexFunction autorelease];
+//        mtlpp::Function fragmentFunction(defaultLibrary.NewFunction(@"fragmentShader"), nullptr, ns::Ownership::AutoRelease);
+//        fragmentFunction.GetPtr().autorelease;
+//        [fragmentFunction autorelease];
+//        mtlpp::Function fragmentFunction2(defaultLibrary.NewFunction(@"fragmentShader2"), nullptr, ns::Ownership::AutoRelease);
+//        fragmentFunction2.GetPtr().autorelease;
+//        [fragmentFunction2 autorelease];
+//        [defaultLibrary release];
         
+//        mtlpp::Function vertexFunction = _loadLib(defaultLibrary, @"vertexShader");
+//        count = CFGetRetainCount(defaultLibrary.GetPtr());
+//        NSLog(@"retain count %ld\n", count);
+//        mtlpp::Function fragmentFunction = _loadLib(defaultLibrary, @"fragmentShader");
+//        count = CFGetRetainCount(defaultLibrary.GetPtr());
+//        NSLog(@"retain count %ld\n", count);
+//        mtlpp::Function fragmentFunction2 = _loadLib(defaultLibrary, @"fragmentShader2");
+//        count = CFGetRetainCount(defaultLibrary.GetPtr());
+//        NSLog(@"retain count %ld\n", count);
+//        CFAutorelease(vertexFunction);
+        
+        defaultLibrary_ = device_.NewDefaultLibrary();
+        long count = CFGetRetainCount(defaultLibrary_.GetPtr());
+        vertexFunction_ = _loadLib(defaultLibrary_, @"vertexShader");
+        count = CFGetRetainCount(defaultLibrary_.GetPtr());
+        NSLog(@"retain count %ld\n", count);
+        fragmentFunction_ = _loadLib(defaultLibrary_, @"fragmentShader");
+        count = CFGetRetainCount(defaultLibrary_.GetPtr());
+        NSLog(@"retain count %ld\n", count);
+        fragmentFunction2_ = _loadLib(defaultLibrary_, @"fragmentShader2");
+        count = CFGetRetainCount(defaultLibrary_.GetPtr());
+        NSLog(@"retain count %ld\n", count);
+
         mtlpp::RenderPipelineDescriptor pipelineStateDescriptor;
         pipelineStateDescriptor.SetLabel("MyPipeline");
         pipelineStateDescriptor.SetSampleCount(1);
-        pipelineStateDescriptor.SetVertexFunction(vertexFunction);
-        pipelineStateDescriptor.SetFragmentFunction(fragmentFunction);
+        pipelineStateDescriptor.SetVertexFunction(vertexFunction_);
+        pipelineStateDescriptor.SetFragmentFunction(fragmentFunction_);
         pipelineStateDescriptor.SetVertexDescriptor(_mtlVertexDescriptor);
         pipelineStateDescriptor.GetColorAttachments()[0].SetPixelFormat(mtlpp::PixelFormat::BGRA8Unorm);
         pipelineStateDescriptor.SetDepthAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
@@ -142,8 +188,8 @@ static const NSUInteger MaxBuffersInFlight = 3;
         mtlpp::RenderPipelineDescriptor pipelineStateDescriptor2;
         pipelineStateDescriptor2.SetLabel(@"MyPipeline2");
         pipelineStateDescriptor2.SetSampleCount(1);
-        pipelineStateDescriptor2.SetVertexFunction(vertexFunction);
-        pipelineStateDescriptor2.SetFragmentFunction(fragmentFunction2);
+        pipelineStateDescriptor2.SetVertexFunction(vertexFunction_);
+        pipelineStateDescriptor2.SetFragmentFunction(fragmentFunction2_);
         pipelineStateDescriptor2.SetVertexDescriptor(_mtlVertexDescriptor);
         pipelineStateDescriptor2.GetColorAttachments()[0].SetPixelFormat(mtlpp::PixelFormat::BGRA8Unorm);
         pipelineStateDescriptor2.SetDepthAttachmentPixelFormat(mtlpp::PixelFormat::Depth32Float_Stencil8);
@@ -190,9 +236,9 @@ static const NSUInteger MaxBuffersInFlight = 3;
 
 -(void)dealloc
 {
-    for (auto resource : resources) {
-        [((NSObject*)resource) release];
-    }
+//    for (auto resource : resources) {
+//        [((NSObject*)resource) release];
+//    }
     for (int i = 0; i < MaxBuffersInFlight; i++) {
         [_dynamicUniformBuffer[i] release];
         [_dynamicUniformBuffer2[i] release];
@@ -596,6 +642,13 @@ static const NSUInteger MaxBuffersInFlight = 3;
 
     commandBuffer.Commit();
     commandBuffer.WaitUntilCompleted();
+}
+
+mtlpp::Function _loadLib(mtlpp::Library &lib, /*mtlpp::Device &device,*/ NSString* libName) {
+//    mtlpp::Library defaultLibrary(device.NewDefaultLibrary());
+    mtlpp::Function func(lib.NewFunction(libName), nullptr, ns::Ownership::AutoRelease);
+    
+    return func;
 }
 
 #pragma mark Matrix Math Utilities
